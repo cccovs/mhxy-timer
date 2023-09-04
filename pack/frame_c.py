@@ -113,7 +113,7 @@ class frame_c(ttk.Frame):
         
         
         # 关于
-        label3 = ttk.Label(text='系统要求: windows10 x64或以上.\n\n开源项目地址:\n-- https://github.com/cccovs/mhxy-timer\n-- https://gitee.com/cccovs/mhxy-timer', anchor='nw', padding=(0, 5, 0, 0))
+        label3 = ttk.Label(text='软件作者: cccovs\n系统要求: windows10 x64或以上.\n\n开源项目地址:\n-- https://github.com/cccovs/mhxy-timer\n-- https://gitee.com/cccovs/mhxy-timer', anchor='nw', padding=(0, 5, 0, 0))
         
         # 添加组件
         self.notebook.add(self.tree, text='进行时')
