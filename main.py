@@ -13,8 +13,8 @@ from pack.frame_a import frame_a
 from pack.frame_b import frame_b
 from pack.frame_c import frame_c
 
-__VERSION__ = 'v2.0'
-__LAST_UPDATE__ = '2023-09-04'
+__VERSION__ = 'v2.0.1'
+__LAST_UPDATE__ = '2023-09-05'
 
 def consumer_task(Q: queue.Queue):
     engine = pyttsx3.init()
