@@ -13,8 +13,8 @@ from pack.frame_a import frame_a
 from pack.frame_b import frame_b
 from pack.frame_c import frame_c
 
-__VERSION__ = 'v2.0.1'
-__LAST_UPDATE__ = '2023-09-05'
+__VERSION__ = 'v2.0.3'
+__LAST_UPDATE__ = '2023-09-06'
 
 def consumer_task(Q: queue.Queue):
     engine = pyttsx3.init()
@@ -29,7 +29,6 @@ def consumer_task(Q: queue.Queue):
 class MainForm:
     def __init__(self) -> None:
         self.Q = queue.Queue()
-        threading.Thread(target=consumer_task, args=(self.Q,), daemon=True).start()
 
         root_x, root_y = 450, 300
 
@@ -56,6 +55,9 @@ class MainForm:
 
         self.f_c = frame_c(self.root, self.Q)
         self.f_c.place(x=0, y=100)
+
+        time.sleep(0.2)
+        threading.Thread(target=consumer_task, args=(self.Q,), daemon=True).start()
 
         self.root.mainloop()
         
@@ -84,7 +86,8 @@ class MainForm:
         self.button_content.set('运行中')
         self.btn.configure(state=tk.DISABLED)
         self.f_a.disabled()
-        time.sleep(0.1)
+
+        time.sleep(0.2)
         threading.Thread(target=self.run, daemon=True).start()
         
 

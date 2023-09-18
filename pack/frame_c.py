@@ -18,10 +18,6 @@ class mouse_clicker:
     def hotkey(self):
         keyboard.add_hotkey('F1', self.__change_run_status, args=(True, ))
         keyboard.add_hotkey('F2', self.__change_run_status, args=(False, ))
-        self.keepclick()
-        keyboard.wait()
-
-    def keepclick(self):
         while True:
             time.sleep(1)
             if self.__share is True:
@@ -45,11 +41,6 @@ class frame_c(ttk.Frame):
         super().__init__(master=root)
 
         self.Q = Q
-
-        # 加载连点器线程
-        self.clicker = mouse_clicker(self.Q)
-        threading.Thread(target=self.clicker.hotkey, daemon=True).start()
-
 
         self.notebook = ttk.Notebook(self, width=446, height=155, padding=2)
         self.notebook.pack()
@@ -121,6 +112,12 @@ class frame_c(ttk.Frame):
         self.notebook.add(self.text, text='记事本')
         self.notebook.add(frame2, text='临时闹钟')
         self.notebook.add(label3, text='关于')
+
+        time.sleep(0.2)
+        # 加载连点器线程
+        self.clicker = mouse_clicker(self.Q)
+        threading.Thread(target=self.clicker.hotkey, daemon=True).start()
+        time.sleep(0.1)
     
 
     def init(self, *args):
