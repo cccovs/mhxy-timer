@@ -16,8 +16,11 @@ class mouse_clicker:
         self.__run = False
 
     def hotkey(self):
+        time.sleep(0.1)
         keyboard.add_hotkey('F1', self.__change_run_status, args=(True, ))
+        time.sleep(0.1)
         keyboard.add_hotkey('F2', self.__change_run_status, args=(False, ))
+        time.sleep(0.1)
         while True:
             time.sleep(1)
             if self.__share is True:

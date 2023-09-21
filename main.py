@@ -13,17 +13,25 @@ from pack.frame_a import frame_a
 from pack.frame_b import frame_b
 from pack.frame_c import frame_c
 
-__VERSION__ = 'v2.0.3'
-__LAST_UPDATE__ = '2023-09-06'
+__VERSION__ = 'v2.0.5'
+__LAST_UPDATE__ = '2023-09-21'
 
-def consumer_task(Q: queue.Queue):
-    engine = pyttsx3.init()
-    engine.setProperty('rate', 135)
+class consumer_task:
+    def __init__(self) -> None:
+        self.engine = pyttsx3.init()
+        self.engine.setProperty('rate', 135)
 
-    while True:
-        msg = Q.get()
-        engine.say(msg)
-        engine.runAndWait()
+    def play(self, Q: queue.Queue):
+        while True:
+            msg = Q.get()
+            self.engine.say(msg)
+            self.engine.runAndWait()
+
+    def change_rate(self, speed_up: bool):
+        if speed_up:
+            self.engine.setProperty('rate', 220)
+        else:
+            self.engine.setProperty('rate', 135)
             
 
 class MainForm:
@@ -57,7 +65,8 @@ class MainForm:
         self.f_c.place(x=0, y=100)
 
         time.sleep(0.2)
-        threading.Thread(target=consumer_task, args=(self.Q,), daemon=True).start()
+        self.consumer = consumer_task()
+        threading.Thread(target=self.consumer.play, args=(self.Q,), daemon=True).start()
 
         self.root.mainloop()
         
@@ -109,11 +118,14 @@ class MainForm:
                 self.Q.put('距离{}, 还有一分钟'.format(self.f_c.get_name))
 
             if timestamp - time.time() > 10:
-                lst = ['zero', 'one', 'two', 'three', 'four', 'five']
                 time.sleep(timestamp - time.time() - 5)
-                for i in range(5, 0, -1):
-                    self.Q.put(lst[i])
+
+                self.consumer.change_rate(True)
+                for item in ('five', 'four', 'three', 'two', 'one'):
+                    self.Q.put(item)
                     time.sleep(1)
+                else:
+                    self.consumer.change_rate(False)
             
             if '上古' in self.f_c.get_name:
                 if self.f_c.get_optionmenu == '关闭':
