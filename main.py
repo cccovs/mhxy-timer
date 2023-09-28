@@ -13,8 +13,8 @@ from pack.frame_a import frame_a
 from pack.frame_b import frame_b
 from pack.frame_c import frame_c
 
-__VERSION__ = 'v2.0.6'
-__LAST_UPDATE__ = '2023-09-25'
+__VERSION__ = 'v2.0.7'
+__LAST_UPDATE__ = '2023-09-28'
 
 class consumer_task:
     def __init__(self) -> None:

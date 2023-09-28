@@ -1,3 +1,4 @@
+# 游戏有概率吃掉热键绑定,所以热键需要经常重置
 import time
 import queue
 import random
@@ -12,30 +13,27 @@ import keyboard
 class mouse_clicker:
     def __init__(self, Q: queue.Queue):
         self.Q = Q
-        self.__share = tk.BooleanVar(value=False)
-        self.__run = tk.BooleanVar(value=False)
+        self.__share = False
+        self.__run = False
 
-    def hotkey(self):
-        time.sleep(0.1)
-        keyboard.add_hotkey('F1', self.__change_run_status, args=(True, ))
-        time.sleep(0.1)
-        keyboard.add_hotkey('F2', self.__change_run_status, args=(False, ))
-        time.sleep(0.1)
+    def keep_click(self):
         while True:
             time.sleep(1)
-            if self.__share.get() is True:
-                while self.__run.get() is True:
+            if self.__share is True:
+                while self.__run is True:
                     # 每秒约7 ~ 8次,符合正常按键手速极限,按键行为约5毫秒
                     time.sleep(random.uniform(0.12, 0.15))
                     mouse.click()
 
-    def __change_run_status(self, status: bool):
-        if self.__share.get() is True:
+    def change_run_status(self, status: bool):
+        if self.__share is True:
             self.Q.put('run' if status else 'stop')
-            self.__run.set(status)
+            self.__run = status
 
     def change_share_status(self, status: bool):
-        self.__share.set(status)
+        self.__share = status
+        if status is False: # 防止公共参数禁止后run参数未停止
+            self.__run = False
 
 
 
@@ -119,7 +117,7 @@ class frame_c(ttk.Frame):
         time.sleep(0.2)
         # 加载连点器线程
         self.clicker = mouse_clicker(self.Q)
-        threading.Thread(target=self.clicker.hotkey, daemon=True).start()
+        threading.Thread(target=self.clicker.keep_click, daemon=True).start()
         time.sleep(0.1)
     
 
@@ -219,12 +217,28 @@ class frame_c(ttk.Frame):
 
     def optionmenu_event(self, event):
         if event == '激活':
+            try: # 防止多次激活
+                keyboard.remove_hotkey(self.kb1)
+                keyboard.remove_hotkey(self.kb2)
+            except:
+                pass
+            finally:
+                self.kb1 = keyboard.add_hotkey('F1', self.clicker.change_run_status, args=(True, ))
+                self.kb2 = keyboard.add_hotkey('F2', self.clicker.change_run_status, args=(False, ))
+
             self.Q.put('鼠标连点器-激活')
             self.label1.pack_forget()
             self.label2.pack(anchor='nw')
             self.clicker.change_share_status(True)  
         else:
-            self.Q.put('鼠标连点器-关闭')
+            try: # 防止多次关闭或者热键绑定被程序吃掉
+                keyboard.remove_hotkey(self.kb1)
+                keyboard.remove_hotkey(self.kb2)
+            except:
+                self.Q.put('绑定的热键被吃掉了')  
+            else:
+                self.Q.put('鼠标连点器-关闭')
+
             self.label2.pack_forget()
             self.label1.pack(anchor='nw')
             self.clicker.change_share_status(False) 
