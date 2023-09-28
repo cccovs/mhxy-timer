@@ -18,13 +18,11 @@ class mouse_clicker:
 
     def keep_click(self):
         while True:
-            self.__share.wait()
+            self.__run.wait()
             while self.__run.is_set():
                 # 每秒约7 ~ 8次,符合正常按键手速极限,按键行为约5毫秒
                 time.sleep(random.uniform(0.12, 0.15))
                 mouse.click()
-            else:
-                time.sleep(0.1)
 
     def change_run_status(self, status: bool):
         if self.__share.is_set():
