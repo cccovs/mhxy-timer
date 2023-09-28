@@ -8,13 +8,13 @@ from tkinter import messagebox
 
 import pyttsx3
 
-from pack.tools import tools
+from pack.plugin.tools import tools
 from pack.frame_a import frame_a
 from pack.frame_b import frame_b
 from pack.frame_c import frame_c
 
-__VERSION__ = 'v2.0.7'
-__LAST_UPDATE__ = '2023-09-28'
+__VERSION__ = 'v2.0.8'
+__LAST_UPDATE__ = '2023-09-29'
 
 class consumer_task:
     def __init__(self) -> None:
@@ -130,10 +130,8 @@ class MainForm:
             if '上古' in self.f_c.get_name:
                 if self.f_c.get_optionmenu == '关闭':
                     self.f_c.set_optionmenu(True)
-                    self.f_c.optionmenu_event('激活')
                     time.sleep(100)
                     self.f_c.set_optionmenu(False)
-                    self.f_c.optionmenu_event('关闭')
                 else:
                     self.Q.put('鼠标连点器状态维持')
 
@@ -146,4 +144,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

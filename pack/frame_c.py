@@ -13,28 +13,34 @@ import keyboard
 class mouse_clicker:
     def __init__(self, Q: queue.Queue):
         self.Q = Q
-        self.__share = False
-        self.__run = False
+        self.__share = threading.Event()
+        self.__run = threading.Event()
 
     def keep_click(self):
         while True:
-            time.sleep(1)
-            if self.__share is True:
-                while self.__run is True:
-                    # 每秒约7 ~ 8次,符合正常按键手速极限,按键行为约5毫秒
-                    time.sleep(random.uniform(0.12, 0.15))
-                    mouse.click()
+            self.__share.wait()
+            while self.__run.is_set():
+                # 每秒约7 ~ 8次,符合正常按键手速极限,按键行为约5毫秒
+                time.sleep(random.uniform(0.12, 0.15))
+                mouse.click()
+            else:
+                time.sleep(0.1)
 
     def change_run_status(self, status: bool):
-        if self.__share is True:
-            self.Q.put('run' if status else 'stop')
-            self.__run = status
+        if self.__share.is_set():
+            if status is True:
+                self.__run.set()
+                self.Q.put('run')
+            else:
+                self.__run.clear()
+                self.Q.put('stop')
 
     def change_share_status(self, status: bool):
-        self.__share = status
-        if status is False: # 防止公共参数禁止后run参数未停止
-            self.__run = False
-
+        if status is True:
+            self.__share.set()
+        else:
+            self.__share.clear()
+            self.__run.clear()
 
 
 class frame_c(ttk.Frame):
@@ -255,12 +261,14 @@ class frame_c(ttk.Frame):
 
     def set_optionmenu(self, on: bool):
         '''
-        护符调用
+        护符调用专属,其它组件禁止调用
         '''
         if on:
             self.content.set('激活')
+            self.optionmenu_event('激活')
         else:
             self.content.set('关闭')
+            self.optionmenu_event('关闭')
 
     @property
     def get_optionmenu(self) -> str:
