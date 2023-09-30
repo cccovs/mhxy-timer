@@ -227,8 +227,8 @@ class frame_c(ttk.Frame):
             except:
                 pass
             finally:
-                self.kb1 = keyboard.add_hotkey('F1', self.clicker.change_run_status, args=(True, ))
-                self.kb2 = keyboard.add_hotkey('F2', self.clicker.change_run_status, args=(False, ))
+                self.kb1 = keyboard.add_hotkey('F1', self.clicker.change_run_status, args=(True, ), suppress=True)
+                self.kb2 = keyboard.add_hotkey('F2', self.clicker.change_run_status, args=(False, ), suppress=True)
 
             self.Q.put('鼠标连点器-激活')
             self.label1.pack_forget()
