@@ -38,6 +38,7 @@ class mouse_clicker:
             self.__share.set()
         else:
             self.__share.clear()
+            time.sleep(0.2)
             self.__run.clear()
 
 
@@ -121,8 +122,10 @@ class frame_c(ttk.Frame):
         time.sleep(0.2)
         # 加载连点器线程
         self.clicker = mouse_clicker(self.Q)
-        threading.Thread(target=self.clicker.keep_click, daemon=True).start()
+        self.t1 = threading.Thread(target=self.clicker.keep_click, daemon=True)
+        self.t1.start()
         time.sleep(0.1)
+        self.daemon_thread()
     
 
     def init(self, *args):
@@ -133,25 +136,43 @@ class frame_c(ttk.Frame):
             self.tree.delete(item)
 
         # 日常, 地煞, 元辰, 护符
-        self.richang = ({'帮派强盗   ': ('12:30:00', '--:--:--'), '竞技场活动1': ('13:00:00', '14:00:00'), '门派争霸  ': ('21:00:00', '21:40:00'), 
+        self.richang = ({'帮派强盗   ': ('12:30:00', '--:--:--'), 
+                         '竞技场活动1': ('13:00:00', '14:00:00'), 
+                         '门派争霸   ': ('21:00:00', '21:40:00'), 
                          '竞技场活动2': ('22:00:00', '23:00:00')},
 
-                        {'帮派百草谷 ': ('12:30:00', '13:00:00'), '帮派答题   ': ('20:20:00', '20:30:00'), '帮派竞赛  ': ('21:00:00', '22:00:00')},
+                        {'帮派百草谷 ': ('12:30:00', '13:00:00'), 
+                         '帮派答题   ': ('20:20:00', '20:30:00'), 
+                         '帮派竞赛   ': ('21:00:00', '22:00:00')},
 
-                        {'九黎演武   ': ('12:15:00', '13:00:00'), '风云竞技场1': ('13:00:00', '14:00:00'), '召唤灵乐园': ('21:00:00', '21:40:00'), 
+                        {'九黎演武   ': ('12:10:00', '13:00:00'), 
+                         '风云竞技场1': ('13:00:00', '14:00:00'), 
+                         '召唤灵乐园 ': ('21:00:00', '21:40:00'), 
                          '风云竞技场2': ('22:00:00', '23:00:00')},
 
-                        {'帮派百草谷 ': ('12:30:00', '13:00:00'), '帮派答题   ': ('20:20:00', '20:30:00'), '帮派竞赛  ': ('21:00:00', '22:00:00')},
+                        {'帮派百草谷 ': ('12:30:00', '13:00:00'), 
+                         '帮派答题   ': ('20:20:00', '20:30:00'), 
+                         '帮派竞赛   ': ('21:00:00', '22:00:00')},
 
-                        {'帮派迷阵   ': ('12:00:00', '14:00:00'), '勇闯迷魂塔 ': ('19:00:00', '22:00:00'), '剑会群英  ': ('20:00:00', '23:00:00')},
+                        {'帮派迷阵   ': ('12:00:00', '14:00:00'), 
+                         '勇闯迷魂塔 ': ('19:00:00', '22:00:00'), 
+                         '剑会群英   ': ('20:00:00', '23:00:00')},
 
-                        {'剑会群英   ': ('12:00:00', '20:00:00'), '小猪快跑  ': ('12:00:00', '18:00:00'), '科举会试1   ': ('13:00:00', '--:--:--'), 
-                         '科举会试2 ': ('15:00:00', '--:--:--'), '科举会试3   ': ('20:00:00', '--:--:--'), '决战九华山 ': ('21:00:00', '22:00:00'), 
+                        {'剑会群英  ': ('12:00:00', '20:00:00'), 
+                         '小猪快跑  ': ('12:00:00', '18:00:00'), 
+                         '科举会试1 ': ('13:00:00', '--:--:--'), 
+                         '科举会试2 ': ('15:00:00', '--:--:--'), 
+                         '科举会试3 ': ('20:00:00', '--:--:--'), 
+                         '决战九华山': ('21:00:00', '22:00:00'), 
                          '帮派车轮战': ('22:00:00', '23:00:00'), 
                         },
 
-                        {'剑会群英   ': ('12:00:00', '20:00:00'), '帮派秘境  ': ('12:30:00', '13:30:00'), '擂台大挑战 ': ('17:00:00', '20:00:00'), 
-                         '梦幻迷城  ': ('18:30:00', '20:00:00'), '比武大会   ': ('21:00:00', '22:20:00'), '比武-结束 ': ('22:20:00', '--:--:--'), 
+                        {'剑会群英  ': ('12:00:00', '20:00:00'), 
+                         '帮派秘境  ': ('12:30:00', '13:30:00'), 
+                         '擂台大挑战': ('17:00:00', '20:00:00'), 
+                         '梦幻迷城  ': ('18:30:00', '20:00:00'), 
+                         '比武大会  ': ('21:00:00', '22:20:00'), 
+                         '比武-结束 ': ('22:20:00', '--:--:--'), 
                          }, )
                 
 
@@ -173,9 +194,14 @@ class frame_c(ttk.Frame):
             self.all_items.update(self.richang[time.localtime().tm_wday])
 
             month_calendar = calendar.monthcalendar(time.localtime().tm_year, time.localtime().tm_mon)
-            # 每月的最后一个星期一(武神坛活动)
-            if time.localtime().tm_mday == month_calendar[-1][0]:
-                self.all_items.update({'武神坛庆功游行': ('20:00:00', '?:?:?'), '武神坛在线抽奖': ('20:20:00', '?:?:?')})
+            # 每月的最后一个星期一(武神坛活动) 旧
+            # 暂改为第五周的星期一 新
+            try:
+                if time.localtime().tm_mday == month_calendar[4][0]:
+                    self.all_items.update({'武神坛庆功游行': ('20:00:00', '20:15:00'), '武神坛在线抽奖': ('20:20:00', '21:00:00')})
+            except:
+                if time.localtime().tm_mday == month_calendar[-1][0]:
+                    self.all_items.update({'武神坛庆功游行': ('20:00:00', '20:15:00'), '武神坛在线抽奖': ('20:20:00', '21:00:00')})
 
             # 每月的最后一个周六(科举殿试)
             if month_calendar[-1][5] == 0:
@@ -281,9 +307,9 @@ class frame_c(ttk.Frame):
         time_str1 = self.tree.item(self.tree.get_children()[1], 'values')[1]
         time_str2 = self.tree.item(self.tree.get_children()[2], 'values')[1]
         if time_str1 == time_str2:
-            return self.tree.item(self.tree.get_children()[1], 'values')[0].rstrip('0123456789').replace('地', '弟') + '-' + self.tree.item(self.tree.get_children()[2], 'values')[0].rstrip('0123456789').replace('地', '弟')
+            return self.tree.item(self.tree.get_children()[1], 'values')[0].rstrip(' 0123456789').replace('地', '弟') + '-' + self.tree.item(self.tree.get_children()[2], 'values')[0].rstrip(' 0123456789').replace('地', '弟')
         else:
-            return self.tree.item(self.tree.get_children()[1], 'values')[0].rstrip('0123456789').replace('地', '弟')
+            return self.tree.item(self.tree.get_children()[1], 'values')[0].rstrip(' 0123456789').replace('地', '弟')
     
     @property
     def get_timestamp(self) -> float:
@@ -292,6 +318,12 @@ class frame_c(ttk.Frame):
         datetime = '{} {}'.format(date, strtime)
         struct_time = time.strptime(datetime, '%Y-%m-%d %H:%M:%S')
         return time.mktime(struct_time)
+    
+    def daemon_thread(self):
+        # 检测线程是否异常退出
+        if not self.t1.is_alive():
+            self.Q.put('警告!连点器线程异常退出')
+        return self.after(60000, self.daemon_thread)
 
         
 if __name__ == '__main__':
