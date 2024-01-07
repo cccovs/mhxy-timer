@@ -1,5 +1,3 @@
-# 用户自定义
-打包/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
