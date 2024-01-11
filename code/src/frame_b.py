@@ -1,6 +1,9 @@
+# 作者: CCCOVS
+
 import time
 import tkinter as tk
 from tkinter import ttk
+
 
 class frame_b(ttk.Frame):
     def __init__(self, root):

@@ -1,38 +1,27 @@
+# 作者: CCCOVS
+
 import os
+import sys
 import time
 import queue
 import threading
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 from tkinter import messagebox
 
-import pyttsx3
+from src.frame_a import frame_a
+from src.frame_b import frame_b
+from src.frame_c import frame_c
+from pkg.base import get_resource_path, is_admin
+from pkg.task import consumer_task
 
-from pack.plugin.tools import tools
-from pack.frame_a import frame_a
-from pack.frame_b import frame_b
-from pack.frame_c import frame_c
+__VERSION__ = 'v2.1.0'
+__LAST_UPDATE__ = '2024-01-10'
 
-__VERSION__ = 'v2.0.9'
-__LAST_UPDATE__ = '2023-10-24'
+if is_admin is False:
+    messagebox.showerror('运行权限不够', '{0}\n{0}\n{}'.format('程序必须以<管理员>身份运行!!!'))
+    sys.exit()
 
-class consumer_task:
-    def __init__(self) -> None:
-        self.engine = pyttsx3.init()
-        self.engine.setProperty('rate', 135)
-
-    def play(self, Q: queue.Queue):
-        while True:
-            msg = Q.get()
-            self.engine.say(msg)
-            self.engine.runAndWait()
-
-    def change_rate(self, speed_up: bool):
-        if speed_up:
-            self.engine.setProperty('rate', 220)
-        else:
-            self.engine.setProperty('rate', 135)
-            
 
 class MainForm:
     def __init__(self) -> None:
@@ -45,7 +34,7 @@ class MainForm:
         self.root.geometry('{}x{}+{}+{}'.format(root_x, root_y, (self.root.winfo_screenwidth()-root_x)//2, (self.root.winfo_screenheight()-root_y)//2))
         self.root.resizable(False, False)
         self.root.protocol('WM_DELETE_WINDOW', self.close_window_event)
-        self.root.iconbitmap(tools.get_resource_path('./pack/image/icon/default.ico'))
+        self.root.iconbitmap(get_resource_path('./bin/icon/default.ico'))
 
         self.root.bind('<Button-3>', lambda event: self.post_window(event))
 
@@ -66,7 +55,7 @@ class MainForm:
 
         time.sleep(0.2)
         self.consumer = consumer_task()
-        threading.Thread(target=self.consumer.play, args=(self.Q,), daemon=True).start()
+        threading.Thread(target=self.consumer.run, args=(self.Q,), daemon=True).start()
 
         self.root.mainloop()
         

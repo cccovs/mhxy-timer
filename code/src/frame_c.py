@@ -1,45 +1,22 @@
+# 作者: CCCOVS
 # 游戏有概率吃掉热键绑定,所以热键需要经常重置
+
+import sys
 import time
 import queue
-import random
 import calendar
 import threading
 import tkinter as tk
 from tkinter import ttk
+from pathlib import WindowsPath
 
-import mouse
 import keyboard
 
-class mouse_clicker:
-    def __init__(self, Q: queue.Queue):
-        self.Q = Q
-        self.__share = threading.Event()
-        self.__run = threading.Event()
+if getattr(sys, 'frozen', False) is False:
+    if WindowsPath(__file__).parents[1].__str__() not in sys.path:
+        sys.path.append(WindowsPath(__file__).parents[1].__str__())
 
-    def keep_click(self):
-        while True:
-            self.__run.wait()
-            while self.__run.is_set():
-                # 每秒约7 ~ 8次,符合正常按键手速极限,按键行为约5毫秒
-                time.sleep(random.uniform(0.12, 0.15))
-                mouse.click()
-
-    def change_run_status(self, status: bool):
-        if self.__share.is_set():
-            if status is True:
-                self.__run.set()
-                self.Q.put('run')
-            else:
-                self.__run.clear()
-                self.Q.put('stop')
-
-    def change_share_status(self, status: bool):
-        if status is True:
-            self.__share.set()
-        else:
-            self.__share.clear()
-            time.sleep(0.2)
-            self.__run.clear()
+from pkg.mouseclick import mouse_clicker
 
 
 class frame_c(ttk.Frame):
@@ -327,6 +304,7 @@ class frame_c(ttk.Frame):
 
         
 if __name__ == '__main__':
+
     Q = queue.Queue()
     root = tk.Tk()
     root.geometry('450x300+1200+550')

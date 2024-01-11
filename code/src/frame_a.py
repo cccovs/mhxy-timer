@@ -1,5 +1,8 @@
+# 作者: CCCOVS
+
 import tkinter as tk
 from tkinter import ttk
+
 
 class frame_a(ttk.Frame):
     def __init__(self, root: tk.Tk) -> None:
