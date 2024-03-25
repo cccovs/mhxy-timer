@@ -15,8 +15,8 @@ from src.frame_c import frame_c
 from pkg.base import get_resource_path, is_admin
 from pkg.task import consumer_task
 
-__VERSION__ = 'v2.1.0'
-__LAST_UPDATE__ = '2024-01-10'
+__VERSION__ = 'v2.1.2'
+__LAST_UPDATE__ = '2024-03-10'
 
 if is_admin is False:
     messagebox.showerror('运行权限不够', '{0}\n{0}\n{}'.format('程序必须以<管理员>身份运行!!!'))
@@ -86,10 +86,10 @@ class MainForm:
         self.f_a.disabled()
 
         time.sleep(0.2)
-        threading.Thread(target=self.run, daemon=True).start()
+        threading.Thread(target=self.play, daemon=True).start()
         
 
-    def run(self):
+    def play(self):
         self.Q.put('软件已启动')
         while True:
             try:
