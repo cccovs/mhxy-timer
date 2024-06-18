@@ -2,21 +2,19 @@
 
 import queue
 
-import pyttsx3
+from op import speaker
 
 class consumer_task:
     def __init__(self) -> None:
-        self.engine = pyttsx3.init()
-        self.engine.setProperty('rate', 135)
+        self.tts = speaker.TTS()
 
     def run(self, Q: queue.Queue):
         while True:
             msg = Q.get()
-            self.engine.say(msg)
-            self.engine.runAndWait()
+            self.tts.say(msg)
 
     def change_rate(self, speed_up: bool):
         if speed_up:
-            self.engine.setProperty('rate', 220)
+            self.tts.rate = 2
         else:
-            self.engine.setProperty('rate', 135)
+            self.tts.rate = 0
